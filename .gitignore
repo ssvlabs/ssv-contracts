@@ -16,3 +16,4 @@ subgraph/build
 /incentivized_testnet/stage
 /incentivized_testnet/latest_metrics.json
 .DS_Store
+.history

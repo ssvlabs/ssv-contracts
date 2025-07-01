@@ -1,55 +1,45 @@
-import 'dotenv/config';
-
-import { HardhatUserConfig, task } from 'hardhat/config';
-import '@nomiclabs/hardhat-waffle';
-import '@nomiclabs/hardhat-ethers';
-import '@nomiclabs/hardhat-etherscan';
-import '@openzeppelin/hardhat-upgrades';
-import 'hardhat-gas-reporter';
-import 'hardhat-tracer';
-import 'solidity-coverage';
-import '@nomiclabs/hardhat-solhint';
+import type { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-toolbox-viem";
+import "@openzeppelin/hardhat-upgrades";
+import "dotenv/config";
 
 const config: HardhatUserConfig = {
-  // Your type-safe config goes here
   solidity: {
     compilers: [
       {
-        version: '0.8.4',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 10000
-          }
-        }
-      }
+        version: "0.8.4",
+      },
     ],
   },
-  networks: {},
-  etherscan: {
-    // Your API key for Etherscan
-    // Obtain one at https://etherscan.io/
-    apiKey: process.env.ETHERSCAN_KEY
+  networks: {
+    hoodi: {
+      chainId: 560048,
+      url: `${process.env.HOODI_ETH_NODE_URL}${process.env.NODE_PROVIDER_KEY}`,
+      accounts: [`0x${process.env.HOODI_OWNER_PRIVATE_KEY}`],
+      gasPrice: +(process.env.GAS_PRICE || ""),
+      gas: +(process.env.GAS || ""),
+    },
+    hardhat: {
+      forking: {
+        url: 'https://ethereum-rpc.publicnode.com',
+        blockNumber: 22820149,
+      },
+      allowBlocksWithSameTimestamp: true,
   }
+  },
+  etherscan: {
+    apiKey: `${process.env.ETHERSCAN_KEY}`,
+    customChains: [
+      {
+        network: "hoodi",
+        chainId: 560048,
+        urls: {
+          apiURL: "https://api-hoodi.etherscan.io/api",
+          browserURL: "https://hoodi.etherscan.io",
+        },
+      },
+    ],
+  },
 };
-
-if (process.env.GOERLI_ETH_NODE_URL) {
-  //@ts-ignore
-  config.networks.goerli = {
-    url: process.env.GOERLI_ETH_NODE_URL,
-    accounts: [`0x${process.env.GOERLI_OWNER_PRIVATE_KEY}`],
-    gasPrice: +(process.env.GAS_PRICE || ''),
-    gas: +(process.env.GAS || '')
-  };
-}
-
-if (process.env.MAINNET_ETH_NODE_URL) {
-  //@ts-ignore
-  config.networks.mainnet = {
-    url: process.env.MAINNET_ETH_NODE_URL,
-    accounts: [`0x${process.env.MAINNET_OWNER_PRIVATE_KEY}`],
-    gasPrice: +(process.env.GAS_PRICE || '')
-  };
-}
 
 export default config;
