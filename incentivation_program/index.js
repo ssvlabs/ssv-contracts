@@ -69,8 +69,15 @@ async function compileContract(contractContent, interfaceContent) {
 
     const output = JSON.parse(solc.compile(JSON.stringify(input)));
     if (output.errors) {
-        console.error(output.errors);
-        throw new Error('Compilation failed');
+        const errors = output.errors.filter(e => e.severity === 'error');
+        const warnings = output.errors.filter(e => e.severity === 'warning');
+        if (warnings.length > 0) {
+            console.warn('Compilation warnings:', warnings.map(w => w.formattedMessage).join('\n'));
+        }
+        if (errors.length > 0) {
+            console.error(errors);
+            throw new Error('Compilation failed');
+        }
     }
 
     return {
