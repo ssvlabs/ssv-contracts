@@ -88,7 +88,7 @@ describe('Distribution: IO1-77', function () {
   })
 
   it('Close Air Drop', async function () {
-    // Close air drop with an incorreect treasury address
+    // Close air drop with an incorrect treasury address
     await merkleDistributor.connect(fakeAccount).endAirdrop().should.be.rejectedWith('Not initiated by treasury.')
 
     // Close air drop and make sure remaining balance has transferred to the treasury and distribution contract is empty
